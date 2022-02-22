@@ -1,11 +1,42 @@
+var arr=[];
+var storedtodo=localStorage.getItem("tasks");
+if(storedtodo!==null)
+{
+    storedtodo=JSON.parse(storedtodo);
+    if(arr.length===0)
+    { 
+        storedtodo.forEach(function (value) {
+            var task=document.createElement("div");
+            task.setAttribute("class","taskitems");
+            var title=document.createElement("span");
+            title.innerHTML=value;
+            var edit=document.createElement("button");
+            edit.innerHTML="edit";
+            var del=document.createElement("button");
+            del.innerHTML="delete";
+            task.appendChild(title);
+            task.appendChild(edit);
+            task.appendChild(del);
+            document.getElementById("items").appendChild(task);
+        });
+    }
+    arr=storedtodo;
+}
 function init()
 {
     var ele=document.getElementById("text");
-    ele.addEventListener("keyup", function (event) {
-        console.log(event);
+    ele.addEventListener("keydown", function (event) {
+        //console.log(event);
         var text=ele.value;
-        if(event.code ==="Enter" && text!==null){
-            //console.log(text);
+        if(text==="" && event.code ==="Enter")
+        {
+            event.preventDefault();
+            ele.value="";
+        }
+        else if(event.code ==="Enter" && ele.value!=="")
+        {
+            event.preventDefault();
+            //console.log(text.length);
             var task=document.createElement("div");
             task.setAttribute("class","taskitems");
             var title=document.createElement("span");
@@ -17,10 +48,32 @@ function init()
             task.appendChild(title);
             task.appendChild(edit);
             task.appendChild(del);
-            document.getElementById("left").appendChild(task);
+            arr.push(text);
+            var narr=JSON.stringify(arr);
+            localStorage.setItem("tasks",narr);
             ele.value="";
+            document.getElementById("items").appendChild(task);
+            //console.log(arr);
         }
+        
     });
-}
+    var itemsList=document.getElementById("items").childNodes;
+    for(var i=0;i<itemsList.length;i++)
+    {
+        var delButton=itemsList[i].children[2];
+        //console.log(itemsList[i].children[0]);
+        delButton.addEventListener("click",function (event){
+            var item=event.target.parentNode;
+            var parent=item.parentNode;
+            parent.removeChild(item);
+            var temptext=item.children[0].innerHTML;
+            storedtodo=storedtodo.filter((val)=>val!=temptext);
+            localStorage.setItem("tasks",JSON.stringify(storedtodo));
+        });
+        //console.log("\n");
+    }
+    
 
+}
 init();
+//console.log(storedtodo);
