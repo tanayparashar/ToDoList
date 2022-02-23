@@ -22,6 +22,7 @@ if(storedtodo!==null)
     }
     arr=storedtodo;
 }
+var selectedToDo=null;
 function init()
 {
     var ele=document.getElementById("text");
@@ -72,8 +73,35 @@ function init()
         });
         //console.log("\n");
     }
-    
+    for(var i=0;i<itemsList.length;i++)
+    {
+        var editButton= itemsList[i].children[1];
+        editButton.addEventListener("click",function (event){
+            var temptext=event.target.parentNode.children[0].innerHTML;
+            //console.log(temptext);
+            ele.value=temptext;
+            selectedToDo=event.target.parentNode.children[0];
+        });
+        
+    }
+    var save=document.getElementById("save");
+    save.addEventListener("click",function (event)
+    {
+        var temptext=selectedToDo.innerHTML;
+        selectedToDo.innerHTML=ele.value;
+        storedtodo=storedtodo.map(function(val) {
+            if(val===temptext)
+            {
+                return ele.value;
+            }
+            else{
+                return val;
+            }
+        });
+        console.log(storedtodo);
+        localStorage.setItem("tasks",JSON.stringify(storedtodo));
 
+    });
 }
 init();
 //console.log(storedtodo);
